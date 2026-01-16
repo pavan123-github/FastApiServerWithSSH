@@ -7,7 +7,7 @@ from app.server import router as server_router
 
 
 app = FastAPI(
-    title="Fastapi job project",
+    title="Fastapi job project with ssh",
     description="Fastapi project for job + real world use",
     version='1.0.0'
 )
