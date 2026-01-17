@@ -2,6 +2,8 @@ from fastapi import FastAPI, Depends, HTTPException
 from sqlalchemy.orm import Session
 from app.auth import get_current_user
 from app.server import router as server_router
+from .models import CommandLog
+from .schemas import CommandRequest 
 
 
 
@@ -58,3 +60,31 @@ def protected_route(user: str = Depends(get_current_user)):
         "message": "You are authenticated",
         "user": user
     }
+
+@server_router.post("/{server_id}/execute")
+def execute_command(
+    server_id: int,
+    data: CommandRequest,
+    db: Session = Depends(get_db),
+    user: str = Depends(get_current_user)
+):
+    try:
+        output = "SSH timeout (Windows local testing)"
+        status = "failed"
+
+        log = CommandLog(
+            server_id=server_id,
+            command=data.command,
+            output=output,
+            status=status
+        )
+        db.add(log)
+        db.commit()
+
+        return {
+            "message": "Command logged successfully",
+            "status": status
+        }
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))

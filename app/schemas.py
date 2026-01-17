@@ -21,3 +21,6 @@ class ServerResponse(ServerCreate):
 
     class Config:
         from_attributes = True
+    
+class CommandRequest(BaseModel):
+    command: str
